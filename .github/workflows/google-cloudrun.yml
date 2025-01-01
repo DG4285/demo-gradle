@@ -72,5 +72,5 @@ jobs:
 
       - name: Deploy to GCP Kubernetes
         run: |-
-          kubectl set image deployment/${{ env.IMAGE_NAME }} ${env.IMAGE_NAME}=${{ env.DOCKER_REPO }}-${{ env.IMAGE_NAME }}:${{ github.sha }}
+          kubectl set image deployment/${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}=${{ env.DOCKER_REPO }}-${{ env.IMAGE_NAME }}:${{ github.sha }}
           kubectl rollout status deployment/${{ env.IMAGE_NAME }}
