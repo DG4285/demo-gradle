@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'jacoco'
 	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'com.google.cloud.tools.jib' version '3.4.4'
@@ -25,6 +26,19 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.2'
 
+}
+
+jacoco {
+	toolVersion = "0.8.10" // Use the latest version available if possible
+}
+
+jacocoTestReport {
+	dependsOn test // Ensure the test task runs first
+
+	reports {
+		xml.required = true
+		html.enabled = true
+	}
 }
 
 tasks.named('test') {
