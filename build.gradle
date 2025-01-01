@@ -33,11 +33,12 @@ jacoco {
 }
 
 jacocoTestReport {
-	dependsOn test // Ensure the test task runs first
+	dependsOn test // Ensure the test task runs before generating the report
 
 	reports {
-		xml.required = true
-		html.enabled = true
+		xml.required.set(true) // Enable XML report generation
+		csv.required.set(false) // Disable CSV report generation if not needed
+		html.required.set(true) // Enable HTML report generation
 	}
 }
 
