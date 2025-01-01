@@ -68,12 +68,7 @@ jobs:
 
       - name: Install gke-gcloud-auth-plugin
         run: |
-          curl -sSL https://sdk.cloud.google.com | bash
-          echo "source /home/runner/google-cloud-sdk/path.bash.inc" >> $GITHUB_ENV
-          echo "source /home/runner/google-cloud-sdk/completion.bash.inc" >> $GITHUB_ENV
-          source /home/runner/google-cloud-sdk/path.bash.inc
-          source /home/runner/google-cloud-sdk/completion.bash.inc
-          gcloud components install gke-gcloud-auth-plugin
+            gcloud components install gke-gcloud-auth-plugin
 
       - name: Connect to GCP Kubernetes Cluster
         run: |-
