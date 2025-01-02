@@ -39,9 +39,21 @@ jobs:
             exit 1
           fi
 
+#      - name: Save Coverage Report
+#        run: |-
+#          tar -czf coverage-report.tar.gz build/reports/jacoco
+#          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+#          docker create -v /coverage --name coverage-container busybox
+#          docker cp coverage-report.tar.gz coverage-container:/coverage/
+#          docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
+#          docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
+
       - name: Save Coverage Report
         run: |-
+          # Ensure the coverage directory exists and contains files before archiving
+          ls -la build/reports/jacoco
           tar -czf coverage-report.tar.gz build/reports/jacoco
+          ls -la coverage-report.tar.gz
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker create -v /coverage --name coverage-container busybox
           docker cp coverage-report.tar.gz coverage-container:/coverage/
