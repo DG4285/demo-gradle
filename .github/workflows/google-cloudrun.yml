@@ -5,7 +5,7 @@ on:
 
 env:
   DOCKER_REPO: dg4285/harmonix-dev # TODO: Update your Docker Hub repository
-  IMAGE_NAME: test-image-name              # TODO: Update your service name
+  IMAGE_NAME: demo-gradle              # TODO: Update your service name
   PROJECT_ID: srilanka-zss-poc-d            # TODO: Update your GCP project id
   K8S_CLUSTER: harmonix-dev-cluster             # TODO: Update your Kubernetes cluster name
   K8S_REGION: us-central1            # TODO: Update your Kubernetes cluster region
