@@ -33,6 +33,10 @@ jobs:
         run: |-
           ./gradlew test jacocoTestReport
           
+          # Install xmllint
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+          
           # Check if the XML report exists
           if [ ! -f build/reports/jacoco/test/jacocoTestReport.xml ]; then
             echo "JaCoCo XML report not found!"
