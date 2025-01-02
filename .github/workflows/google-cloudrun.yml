@@ -48,19 +48,24 @@ jobs:
 #          docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
 #          docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
 
-      - name: Save Coverage Report
-        run: |-
-          # Ensure the coverage directory exists and contains files before archiving
+      - name: Verify and Archive Coverage Report
+        run: |
           ls -la build/reports/jacoco
-          tar -czf coverage-report.tar.gz build/reports/jacoco
+          tar -czf coverage-report.tar.gz -C build/reports/jacoco .
           ls -la coverage-report.tar.gz
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Create and Push Coverage Report Docker Image
+        run: |
           docker create -v /coverage --name coverage-container busybox
           docker cp coverage-report.tar.gz coverage-container:/coverage/
           docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
           docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
+          docker rm coverage-container
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image - project
         run: |-
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker build -t ${{ env.DOCKER_REPO }}-${{ env.IMAGE_NAME }}:${{ github.sha }} .
