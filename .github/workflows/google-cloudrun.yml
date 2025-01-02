@@ -66,11 +66,28 @@ jobs:
 #          docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
 #          docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
 
+#      - name: Verify and Archive Coverage Report
+#        run: |
+#          ls -la build/reports/jacoco
+#          tar -czf coverage-report.tar.gz -C build/reports/jacoco .
+#          ls -la coverage-report.tar.gz
+
       - name: Verify and Archive Coverage Report
         run: |
-          ls -la build/reports/jacoco
+          # Verify the existence of the report directory and its contents
+          if [ -d build/reports/jacoco ]; then
+            echo "JaCoCo reports directory found."
+            ls -la build/reports/jacoco
+          else
+            echo "JaCoCo reports directory not found!"
+            exit 1
+          fi
+
+          # Archive the report
           tar -czf coverage-report.tar.gz -C build/reports/jacoco .
-          ls -la coverage-report.tar.gz
+
+          # List the contents of the archive to verify
+          tar -tzf coverage-report.tar.gz
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
