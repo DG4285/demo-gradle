@@ -105,14 +105,13 @@ jobs:
 
       - name: Create and Push Coverage Report Docker Image
         run: |
-          # Create a Docker container with a volume for coverage
-          docker create -v /coverage --name coverage-container busybox
+          # Create and run a Docker container with a volume for coverage
+          docker run --name coverage-container -v /coverage busybox sleep 1d
           
           # Copy the coverage report archive into the container's coverage directory
           docker cp coverage-report.tar.gz coverage-container:/coverage/
           
           # Verify the contents of the container's coverage directory
-          docker start coverage-container
           docker exec coverage-container ls -la /coverage/
           
           # Commit the container to create a new Docker image
@@ -122,7 +121,7 @@ jobs:
           docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
           
           # Remove the container
-          docker rm coverage-container
+          docker rm -f coverage-container
 
       - name: Build and Push Docker Image - project
         run: |-
