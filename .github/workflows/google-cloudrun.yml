@@ -59,30 +59,29 @@ jobs:
 
       - name: Verify and Archive Coverage Report
         run: |
-          # Verify the existence of the report directory and its contents
-          if [ -d build/reports/jacoco ]; then
-            echo "JaCoCo reports directory found."
-            ls -la build/reports/jacoco
-          else
-            echo "JaCoCo reports directory not found!"
-            exit 1
-          fi
-  
-          # Archive the report
-#          tar -czf coverage-report.tar.gz -C build/reports/jacoco .
-          zip -r coverage-report.zip build/reports/jacoco/*
-
-          # Verify the archive creation
-          if [ -f coverage-report.zip ]; then
-            echo "Coverage report archive created successfully."
-            ls -la coverage-report.zip
-          else
-            echo "Failed to create coverage report archive!"
-            exit 1
-          fi
-  
-          # List the contents of the archive to verify
-          tar -tzf coverage-report.zip
+            # Verify the existence of the report directory and its contents
+            if [ -d build/reports/jacoco ]; then
+              echo "JaCoCo reports directory found."
+              ls -la build/reports/jacoco
+            else
+              echo "JaCoCo reports directory not found!"
+              exit 1
+            fi
+            
+            # Archive the report
+            zip -r coverage-report.zip build/reports/jacoco/*
+            
+            # Verify the archive creation
+            if [ -f coverage-report.zip ]; then
+              echo "Coverage report archive created successfully."
+              ls -la coverage-report.zip
+            else
+              echo "Failed to create coverage report archive!"
+              exit 1
+            fi
+            
+            # List the contents of the archive to verify
+            unzip -l coverage-report.zip
 
       - name: Upload Coverage Report Artifact
         uses: actions/upload-artifact@v3
