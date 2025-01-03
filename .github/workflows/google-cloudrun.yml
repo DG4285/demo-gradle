@@ -69,25 +69,26 @@ jobs:
           fi
   
           # Archive the report
-          tar -czf coverage-report.tar.gz -C build/reports/jacoco .
-  
+#          tar -czf coverage-report.tar.gz -C build/reports/jacoco .
+          zip -r coverage-report.zip build/reports/jacoco/*
+
           # Verify the archive creation
-          if [ -f coverage-report.tar.gz ]; then
+          if [ -f coverage-report.zip ]; then
             echo "Coverage report archive created successfully."
-            ls -la coverage-report.tar.gz
+            ls -la coverage-report.zip
           else
             echo "Failed to create coverage report archive!"
             exit 1
           fi
   
           # List the contents of the archive to verify
-          tar -tzf coverage-report.tar.gz
+          tar -tzf coverage-report.zip
 
       - name: Upload Coverage Report Artifact
         uses: actions/upload-artifact@v3
         with:
             name: coverage-report
-            path: coverage-report.tar.gz
+            path: coverage-report.zip
 
 #      - name: Log in to Docker Hub
 #        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
