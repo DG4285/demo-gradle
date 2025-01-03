@@ -103,6 +103,10 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Pre-pull Docker Image
+        run: |
+            docker pull busybox:latest
+
       - name: Create and Push Coverage Report Docker Image
         run: |
           # Create and run a Docker container with a volume for coverage
