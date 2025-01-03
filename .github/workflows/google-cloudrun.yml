@@ -57,75 +57,64 @@ jobs:
             exit 1
           fi
 
-#      - name: Save Coverage Report
-#        run: |-
-#          tar -czf coverage-report.tar.gz build/reports/jacoco
-#          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-#          docker create -v /coverage --name coverage-container busybox
-#          docker cp coverage-report.tar.gz coverage-container:/coverage/
-#          docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
-#          docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
-
-#      - name: Verify and Archive Coverage Report
-#        run: |
-#          ls -la build/reports/jacoco
-#          tar -czf coverage-report.tar.gz -C build/reports/jacoco .
-#          ls -la coverage-report.tar.gz
-
       - name: Verify and Archive Coverage Report
         run: |
-          run: |
           # Verify the existence of the report directory and its contents
           if [ -d build/reports/jacoco ]; then
-           echo "JaCoCo reports directory found."
-           ls -la build/reports/jacoco
+            echo "JaCoCo reports directory found."
+            ls -la build/reports/jacoco
           else
-           echo "JaCoCo reports directory not found!"
-           exit 1
+            echo "JaCoCo reports directory not found!"
+            exit 1
           fi
-
+  
           # Archive the report
           tar -czf coverage-report.tar.gz -C build/reports/jacoco .
-
+  
           # Verify the archive creation
           if [ -f coverage-report.tar.gz ]; then
-           echo "Coverage report archive created successfully."
-           ls -la coverage-report.tar.gz
+            echo "Coverage report archive created successfully."
+            ls -la coverage-report.tar.gz
           else
-           echo "Failed to create coverage report archive!"
-           exit 1
+            echo "Failed to create coverage report archive!"
+            exit 1
           fi
-
+  
           # List the contents of the archive to verify
           tar -tzf coverage-report.tar.gz
 
+      - name: Upload Coverage Report Artifact
+        uses: actions/upload-artifact@v2
+        with:
+            name: coverage-report
+            path: coverage-report.tar.gz
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Pre-pull Docker Image
-        run: |
-            docker pull busybox:latest
-
-      - name: Create and Push Coverage Report Docker Image
-        run: |
-          # Create and run a Docker container with a volume for coverage
-          docker run --name coverage-container -v /coverage busybox sleep 1d
-          
-          # Copy the coverage report archive into the container's coverage directory
-          docker cp coverage-report.tar.gz coverage-container:/coverage/
-          
-          # Verify the contents of the container's coverage directory
-          docker exec coverage-container ls -la /coverage/
-          
-          # Commit the container to create a new Docker image
-          docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
-          
-          # Push the Docker image to the specified repository
-          docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
-          
-          # Remove the container
-          docker rm -f coverage-container
+#      - name: Log in to Docker Hub
+#        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+#
+#      - name: Pre-pull Docker Image
+#        run: |
+#            docker pull busybox:latest
+#
+#      - name: Create and Push Coverage Report Docker Image
+#        run: |
+#          # Create and run a Docker container with a volume for coverage
+#          docker run --name coverage-container -v /coverage busybox sleep 1d
+#
+#          # Copy the coverage report archive into the container's coverage directory
+#          docker cp coverage-report.tar.gz coverage-container:/coverage/
+#
+#          # Verify the contents of the container's coverage directory
+#          docker exec coverage-container ls -la /coverage/
+#
+#          # Commit the container to create a new Docker image
+#          docker commit coverage-container ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
+#
+#          # Push the Docker image to the specified repository
+#          docker push ${{ env.DOCKER_REPO }}-coverage-report:${{ github.sha }}
+#
+#          # Remove the container
+#          docker rm -f coverage-container
 
       - name: Build and Push Docker Image - project
         run: |-
